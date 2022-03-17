@@ -2,26 +2,33 @@ package com.example.wineapp.models;
 
 import android.graphics.Bitmap;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "wine_table")
 public class Wine {
-    int id;
-    String name;
-    String description;
-    double alcohol;// w %
-    double sugar;// w kg
-    double volume; //objętość w L
-    double water; //dodana woda w L
-    double fruit;// sok owocowy lub miazga owocowa w L, zawartość cukru dodać do sugar
-    double sweetener;//słodzik w kg
-    double yeastTolerance;//?
-    String startDate;// data nastawienia wina
-    String bottlingDate;//data butelkowania
-    Bitmap photo;
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    private String name;
+    private String description;
+    private double alcohol;// w %
+    private double sugar;// w kg
+    private double volume; //objętość w L
+    private double water; //dodana woda w L
+    private double fruit;// sok owocowy lub miazga owocowa w L, zawartość cukru dodać do sugar
+    private double sweetener;//słodzik w kg
+    @ColumnInfo(name = "yeast_tolerance")
+    private double yeastTolerance;//?
+    @ColumnInfo(name = "start_date")
+    private String startDate;// data nastawienia wina
+    @ColumnInfo(name = "bottling_date")
+    private String bottlingDate;//data butelkowania
+    //todo add image
+//    private Bitmap photo;
 
-    public Wine() {
-    }
 
-    public Wine(int id, String name, String description, double alcohol, double sugar, double volume, double water, double fruit, double sweetener, double yeastTolerance, String startDate) {
-        this.id = id;
+    public Wine(String name, String description, double alcohol, double sugar, double volume, double water, double fruit, double sweetener, double yeastTolerance, String startDate, String bottlingDate) {
         this.name = name;
         this.description = description;
         this.alcohol = alcohol;
@@ -32,109 +39,58 @@ public class Wine {
         this.sweetener = sweetener;
         this.yeastTolerance = yeastTolerance;
         this.startDate = startDate;
-    }
-
-    public Bitmap getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(Bitmap photo) {
-        this.photo = photo;
-    }
-
-    public int getId() {
-        return id;
+        this.bottlingDate = bottlingDate;
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public double getAlcohol() {
         return alcohol;
-    }
-
-    public void setAlcohol(double alcohol) {
-        this.alcohol = alcohol;
     }
 
     public double getSugar() {
         return sugar;
     }
 
-    public void setSugar(double sugar) {
-        this.sugar = sugar;
-    }
-
     public double getVolume() {
         return volume;
-    }
-
-    public void setVolume(double volume) {
-        this.volume = volume;
     }
 
     public double getWater() {
         return water;
     }
 
-    public void setWater(double water) {
-        this.water = water;
-    }
-
     public double getFruit() {
         return fruit;
-    }
-
-    public void setFruit(double fruit) {
-        this.fruit = fruit;
     }
 
     public double getSweetener() {
         return sweetener;
     }
 
-    public void setSweetener(double sweetener) {
-        this.sweetener = sweetener;
-    }
-
     public double getYeastTolerance() {
         return yeastTolerance;
-    }
-
-    public void setYeastTolerance(double yeastTolerance) {
-        this.yeastTolerance = yeastTolerance;
     }
 
     public String getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
     public String getBottlingDate() {
         return bottlingDate;
-    }
-
-    public void setBottlingDate(String bottlingDate) {
-        this.bottlingDate = bottlingDate;
     }
 }

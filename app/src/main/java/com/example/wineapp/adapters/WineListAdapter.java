@@ -21,13 +21,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class WineListAdapter extends RecyclerView.Adapter<WineListAdapter.ViewHolder> {
 
-    private List<Wine> data;
+    private List<Wine> data = new ArrayList<>();
 
-    public WineListAdapter(List<Wine> data){
-        Log.e("WineListAdapter",data.size()+"");
-        this.data = data;
-        Log.e("WineListAdapter",this.data.size()+"");
-    }
+//    public WineListAdapter(List<Wine> data){
+//        Log.e("WineListAdapter",data.size()+"");
+//        this.data = data;
+//        Log.e("WineListAdapter",this.data.size()+"");
+//    }
 
 
     @Override
@@ -39,10 +39,17 @@ public class WineListAdapter extends RecyclerView.Adapter<WineListAdapter.ViewHo
     @Override
     public void onBindViewHolder( WineListAdapter.ViewHolder holder, int position) {
         holder.nameTextView.setText(data.get(position).getName());
+        holder.startDateTextView.setText(data.get(position).getStartDate());
+        holder.alcoholTextView.setText(data.get(position).getAlcohol()+"%");
+        holder.bottlingDateTextView.setText(data.get(position).getBottlingDate());
         Log.e("WineListAdapter",data.get(position).getName());
 
     }
 
+    public void setData(List<Wine> data){
+        this.data = data;
+        notifyDataSetChanged();
+    }
 
     class ViewHolder extends RecyclerView.ViewHolder{
         CircleImageView photoImageView;
