@@ -17,28 +17,11 @@ public class WineListViewModel extends AndroidViewModel {
 
     private LiveData<List<Wine>> mWines;
     private WineRepository wineRepository;
-    private MutableLiveData<Boolean> mIsUpdating = new MutableLiveData<>();
 
     public WineListViewModel(@NonNull Application application) {
         super(application);
         wineRepository = new WineRepository(application);
         mWines = wineRepository.getAllWines();
-    }
-
-    public void init(){
-        if(mWines != null){
-            return;
-        }
-//        wineRepository = WineRepository();
-//        mWines = wineRepository.getWines();
-    }
-
-    public void insert(Wine wine){
-        wineRepository.insert(wine);
-    }
-
-    public void update(Wine wine){
-        wineRepository.update(wine);
     }
 
     public void delete(Wine wine){
