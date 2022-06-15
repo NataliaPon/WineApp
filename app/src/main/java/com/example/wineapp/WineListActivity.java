@@ -27,6 +27,7 @@ import com.example.wineapp.adapters.WineListAdapter;
 import com.example.wineapp.models.OperationType;
 import com.example.wineapp.models.Wine;
 import com.example.wineapp.viewmodels.WineListViewModel;
+import com.google.android.material.bottomappbar.BottomAppBar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class WineListActivity extends AppCompatActivity {
     private RecyclerView wineListRecyclerView;
     private WineListViewModel wineListViewModel;
     private FloatingActionButton addWineButton;
+    private BottomAppBar bottomAppBar;
 
     @Override
     public void onBackPressed() {
@@ -56,6 +58,7 @@ public class WineListActivity extends AppCompatActivity {
 
         wineListRecyclerView = findViewById(R.id.wineListRecyclerView);
         addWineButton = findViewById(R.id.addWineButton);
+        bottomAppBar = findViewById(R.id.bottomAppBar);
 
         Toolbar topToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(topToolbar);
@@ -71,42 +74,42 @@ public class WineListActivity extends AppCompatActivity {
             }
         });
 
-        addWineButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                v.setVisibility(View.INVISIBLE);
-                getSupportFragmentManager().beginTransaction().replace(R.id.wineListContainer, AddWineFragment.newInstance(OperationType.View,null))
-                        .setReorderingAllowed(true)
-                        .addToBackStack(null)
-                        .commit();
+        bottomAppBar.setOnMenuItemClickListener(item -> {
+            if(item.getItemId()==R.id.calendar_list){
+
             }
+            return false;
         });
 
+        addWineButton.setOnClickListener(v -> {
+//                v.setVisibility(View.INVISIBLE);
+            getSupportFragmentManager().beginTransaction().replace(R.id.wineListContainer, AddWineFragment.newInstance(OperationType.Add,null))
+                    .setReorderingAllowed(true)
+                    .addToBackStack(null)
+                    .commit();
+        });
     }
 
         private void initRecyclerView(){
 //        Log.e(TAG,wineListViewModel.getWines().getValue().size()+"");
-        wineListAdapter = new WineListAdapter(context, new OnClickListenerCallBack() {
-            @Override
-            public void onItemClick(Wine itemClicked, OperationType operationType) {
-                switch (operationType){
-                    case View:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.wineListContainer, ViewWineFragment.newInstance(itemClicked))
-                                .setReorderingAllowed(true)
-                                .addToBackStack(null)
-                                .commit();
-                        break;
-                    case Edit:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.wineListContainer, AddWineFragment.newInstance(OperationType.Edit,itemClicked))
-                                .setReorderingAllowed(true)
-                                .addToBackStack(null)
-                                .commit();
-                        break;
-                    case Delete:
-                        wineListViewModel.delete(itemClicked);
-                        wineListAdapter.notifyDataSetChanged();
-                        break;
-                }
+        wineListAdapter = new WineListAdapter(context, (itemClicked, operationType) -> {
+            switch (operationType){
+                case View:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.wineListContainer, ViewWineFragment.newInstance(itemClicked))
+                            .setReorderingAllowed(true)
+                            .addToBackStack(null)
+                            .commit();
+                    break;
+                case Edit:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.wineListContainer, AddWineFragment.newInstance(OperationType.Edit,itemClicked))
+                            .setReorderingAllowed(true)
+                            .addToBackStack(null)
+                            .commit();
+                    break;
+                case Delete:
+                    wineListViewModel.delete(itemClicked);
+//                        wineListAdapter.notifyDataSetChanged();
+                    break;
             }
         });//wineListViewModel.getWines().getValue()
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);

@@ -4,4 +4,7 @@ public enum OperationType {
     View, //show details
     Edit, //edit item
     Delete, //delete item
+    Add,
+    AddPhoto,
+    EditPhoto
 }

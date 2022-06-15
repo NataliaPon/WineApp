@@ -1,6 +1,8 @@
 package com.example.wineapp.adapters;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -12,6 +14,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wineapp.Interfaces.OnClickListenerCallBack;
@@ -49,14 +53,20 @@ public class WineListAdapter extends RecyclerView.Adapter<WineListAdapter.ViewHo
         holder.startDateTextView.setText(data.get(position).getStartDate());
         holder.alcoholTextView.setText(data.get(position).getAlcohol()+"%");
         holder.bottlingDateTextView.setText(data.get(position).getBottlingDate());
-        Log.e("WineListAdapter",data.get(position).getName());
-
-        holder.itemContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickListenerCallBack.onItemClick(wine, OperationType.View);
+        if(wine.getPhoto()!=null){
+            try {
+                holder.photoImageView.setImageURI(Uri.parse(wine.getPhoto()));
+            }catch (Exception e){
+                e.printStackTrace();
             }
-        });
+        }else holder.photoImageView.setVisibility(View.INVISIBLE);
+
+        if(wine.getBackgroundColor()!= -1){
+            holder.container.setBackgroundTintList(ContextCompat.getColorStateList(context, wine.getBackgroundColor()));
+        }
+
+        holder.itemContainer.setOnClickListener(v ->
+                onClickListenerCallBack.onItemClick(wine, OperationType.View));
 
         holder.imageViewMenuItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +86,7 @@ public class WineListAdapter extends RecyclerView.Adapter<WineListAdapter.ViewHo
         CircleImageView photoImageView;
         TextView nameTextView, startDateTextView, alcoholTextView, bottlingDateTextView;
         LinearLayout itemContainer;
+        CardView container;
         ImageView imageViewMenuItem;
 
         ViewHolder(View itemView) {
@@ -87,6 +98,7 @@ public class WineListAdapter extends RecyclerView.Adapter<WineListAdapter.ViewHo
             bottlingDateTextView = itemView.findViewById(R.id.bottlingDateTextView);
             itemContainer = itemView.findViewById(R.id.itemContainer);
             imageViewMenuItem = itemView.findViewById(R.id.imageViewMenuItem);
+            container = itemView.findViewById(R.id.container);
         }
     }
 

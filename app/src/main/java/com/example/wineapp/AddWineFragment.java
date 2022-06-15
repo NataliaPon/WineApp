@@ -1,9 +1,19 @@
 package com.example.wineapp;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.DialogInterface;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,12 +22,14 @@ import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -25,25 +37,30 @@ import android.widget.TextView;
 import com.example.wineapp.models.OperationType;
 import com.example.wineapp.models.Wine;
 import com.example.wineapp.viewmodels.AddWineViewModel;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class AddWineFragment extends Fragment {
 
     private AddWineViewModel mViewModel;
     private static Wine wine;
     private static OperationType operationType;
-    private ImageView closeAddWineFragmentButton;
+    private ImageView closeAddWineFragmentButton, imageViewPhoto;
     private Toolbar topToolbar;
     private EditText editTextName, editTextFruits, editTextFruitsSugar, editTextWater, editTextSugar, editTextYeastTolerance, editTextDescription, editTextSweetener;
     private TextView textViewAlcohol, textViewStartDate, textViewBottlingDate;
+    Button buttonColor;
+    private FloatingActionButton fabPhoto;
     private Double totalSugar=0d, totalVolume=0d, alcohol=0d;
+
+    AlertDialog chooseColorDialog;
+    Integer chosenColor;
+
 
     public static AddWineFragment newInstance(OperationType operationType, Wine wine) {
         Bundle args = new Bundle();
@@ -85,11 +102,16 @@ public class AddWineFragment extends Fragment {
         textViewStartDate = rootView.findViewById(R.id.textViewStartDate);
         textViewBottlingDate = rootView.findViewById(R.id.textViewBottlingDate);
         editTextSweetener = rootView.findViewById(R.id.editTextSweetener);
+        imageViewPhoto = rootView.findViewById(R.id.imageViewPhoto);
+        buttonColor = rootView.findViewById(R.id.buttonColor);
+        fabPhoto = rootView.findViewById(R.id.fabPhoto);
 
         ((WineListActivity) requireActivity()).hideFloatingActionButton();
 
+        buttonColor.setOnClickListener(view -> openChooseColorDialog());
+
         if (operationType != null && wine != null) {
-            if (operationType.equals(OperationType.Edit)) {
+            if (operationType.equals(OperationType.Edit) || operationType.equals(OperationType.AddPhoto) || operationType.equals(OperationType.EditPhoto)) {
                 editTextName.setText(wine.getName());
                 editTextFruits.setText(wine.getFruit()+"");
                 editTextSweetener.setText(wine.getSweetener()+"");
@@ -101,6 +123,19 @@ public class AddWineFragment extends Fragment {
                 textViewAlcohol.setText(wine.getAlcohol()+"");
                 textViewStartDate.setText(wine.getStartDate());
                 textViewBottlingDate.setText(wine.getBottlingDate());
+                if(wine.getPhoto()!=null){
+                    try {
+                        imageViewPhoto.setVisibility(View.VISIBLE);
+                        imageViewPhoto.setImageURI(Uri.parse(wine.getPhoto()));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        imageViewPhoto.setVisibility(View.GONE);
+                    }
+                }
+                if(wine.getBackgroundColor()!= -1){
+                    buttonColor.setBackgroundTintList(ContextCompat.getColorStateList(requireActivity(), wine.getBackgroundColor()));
+                    chosenColor = wine.getBackgroundColor();
+                }
             }
         }
 
@@ -115,33 +150,31 @@ public class AddWineFragment extends Fragment {
             }
         });
 
-        TextWatcher volumeChange = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+        fabPhoto.setOnClickListener(v -> {
+//            Log.e("fabPhoto","clicked");
+            //todo show hide fragment ???
+            if (getFragmentManager() != null) {
+                if(operationType.equals(OperationType.Add) || operationType.equals(OperationType.AddPhoto))
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.wineListContainer, CaptureImageFragment.newInstance(getWine(),OperationType.AddPhoto), "CaptureImageFragment")
+                            .setReorderingAllowed(true)
+                            .addToBackStack(null)
+                            .commit();
+                else if(operationType.equals(OperationType.Edit) || operationType.equals(OperationType.EditPhoto))
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.wineListContainer, CaptureImageFragment.newInstance(wine,OperationType.EditPhoto), "CaptureImageFragment")
+                            .setReorderingAllowed(true)
+                            .addToBackStack(null)
+                            .commit();
             }
+        });
+
+        TextWatcher updateTextWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                getAlcohol();
-            }
-        };
-
-        TextWatcher sugarChange = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -149,29 +182,22 @@ public class AddWineFragment extends Fragment {
             }
         };
 
-        editTextWater.addTextChangedListener(volumeChange);
-        editTextFruits.addTextChangedListener(volumeChange);
-        editTextSugar.addTextChangedListener(sugarChange);
-        editTextFruitsSugar.addTextChangedListener(sugarChange);
+        editTextWater.addTextChangedListener(updateTextWatcher);
+        editTextFruits.addTextChangedListener(updateTextWatcher);
+        editTextSugar.addTextChangedListener(updateTextWatcher);
+        editTextFruitsSugar.addTextChangedListener(updateTextWatcher);
 
-        textViewStartDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MaterialDatePicker<Long> datePicker =
-                        MaterialDatePicker.Builder.datePicker()
-                                .setTitleText("Wybierz datę nastawu")
-                                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                                .build();
-                datePicker.show(getFragmentManager(),"tag");
-                datePicker.addOnPositiveButtonClickListener(new MaterialPickerOnPositiveButtonClickListener<Long>() {
-                    @Override
-                    public void onPositiveButtonClick(Long selection) {
-                        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy/MM/dd");
-                        textViewStartDate.setText(simpleFormat.format(selection)+"");
-                    }
-
-                });
-            }
+        textViewStartDate.setOnClickListener(view -> {
+            MaterialDatePicker<Long> datePicker =
+                    MaterialDatePicker.Builder.datePicker()
+                            .setTitleText("Wybierz datę nastawu")
+                            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                            .build();
+            datePicker.show(getFragmentManager(),"tag");
+            datePicker.addOnPositiveButtonClickListener(selection -> {
+                SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy/MM/dd");
+                textViewStartDate.setText(simpleFormat.format(selection)+"");
+            });
         });
 
         textViewBottlingDate.setOnClickListener(new View.OnClickListener() {
@@ -196,6 +222,75 @@ public class AddWineFragment extends Fragment {
         return rootView;
     }
 
+    private void openChooseColorDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_choose_color, null);
+        view.findViewById(R.id.buttonBlack).setOnClickListener(view1 -> {
+            chosenColor = R.color.labelColorBlack;
+            setButtonColor(chooseColorDialog);
+        });
+        view.findViewById(R.id.buttonBlue).setOnClickListener(view1 -> {
+            chosenColor = R.color.labelColorBlue;
+            setButtonColor(chooseColorDialog);
+        });
+        view.findViewById(R.id.buttonGreen).setOnClickListener(view1 -> {
+            chosenColor = R.color.labelColorGreen;
+            setButtonColor(chooseColorDialog);
+        });
+        view.findViewById(R.id.buttonGrey).setOnClickListener(view1 -> {
+            chosenColor = R.color.labelColorGrey;
+            setButtonColor(chooseColorDialog);
+        });
+        view.findViewById(R.id.buttonOrange).setOnClickListener(view1 -> {
+            chosenColor = R.color.labelColorOrange;
+            setButtonColor(chooseColorDialog);
+        });
+        view.findViewById(R.id.buttonPink).setOnClickListener(view1 -> {
+            chosenColor = R.color.labelColorPink;
+            setButtonColor(chooseColorDialog);
+        });
+        view.findViewById(R.id.buttonViolet).setOnClickListener(view1 -> {
+            chosenColor = R.color.labelColorViolet;
+            setButtonColor(chooseColorDialog);
+        });
+        view.findViewById(R.id.buttonYellow).setOnClickListener(view1 -> {
+            chosenColor = R.color.labelColorYellow;
+            setButtonColor(chooseColorDialog);
+        });
+        view.findViewById(R.id.buttonRed).setOnClickListener(view1 -> {
+            chosenColor = R.color.labelColorRed;
+            setButtonColor(chooseColorDialog);
+        });
+        builder.setView(view);
+        chooseColorDialog = builder.create();
+        chooseColorDialog.show();
+    }
+
+    void setButtonColor(AlertDialog chooseColorDialog){
+        buttonColor.setBackgroundTintList(ContextCompat.getColorStateList(requireActivity(), chosenColor));
+        if(chooseColorDialog != null && chooseColorDialog.isShowing())
+            chooseColorDialog.dismiss();
+    }
+
+    private Wine getWine(){
+        return new Wine(
+                editTextName.getText().toString(),
+                editTextDescription.getText().toString(),
+                getAlcohol(),
+                mViewModel.editTextToDouble(editTextSugar.getText().toString()),
+                totalVolume,
+                mViewModel.editTextToDouble(editTextWater.getText().toString()),
+                mViewModel.editTextToDouble(editTextFruits.getText().toString()),
+                mViewModel.editTextToDouble(editTextFruitsSugar.getText().toString()),
+                mViewModel.editTextToDouble(editTextSweetener.getText().toString()),
+                mViewModel.editTextToDouble(editTextYeastTolerance.getText().toString()),
+                textViewStartDate.getText().toString(),
+                textViewBottlingDate.getText().toString(),
+                chosenColor != null ? chosenColor : -1
+        );
+    }
+
     Double getAlcohol(){
         totalVolume = mViewModel.countTotalVolume(editTextWater.getText().toString(), editTextFruits.getText().toString(), editTextSugar.getText().toString());
         totalSugar = mViewModel.countTotalSugar(editTextSugar.getText().toString(), editTextFruitsSugar.getText().toString(), editTextFruits.getText().toString());
@@ -217,27 +312,23 @@ public class AddWineFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.saveMenuButton){
             //zapisać dane
-            Wine newWine = new Wine(
-                    editTextName.getText().toString(),
-                    editTextDescription.getText().toString(),
-                    getAlcohol(),
-                    mViewModel.editTextToDouble(editTextSugar.getText().toString()),
-                    totalVolume,
-                    mViewModel.editTextToDouble(editTextWater.getText().toString()),
-                    mViewModel.editTextToDouble(editTextFruits.getText().toString()),
-                    mViewModel.editTextToDouble(editTextFruitsSugar.getText().toString()),
-                    mViewModel.editTextToDouble(editTextSweetener.getText().toString()),
-                    mViewModel.editTextToDouble(editTextYeastTolerance.getText().toString()),
-                    textViewStartDate.getText().toString(),
-                    textViewBottlingDate.getText().toString()
-            );
-            if (operationType.equals(OperationType.Edit)) {
-                newWine.setId(wine.getId());
-                mViewModel.update(newWine);
-            }else {
-                mViewModel.insert(newWine);
+            Wine newWine = getWine();
+            switch (operationType){
+                case Add:
+                    mViewModel.insert(newWine);
+                    break;
+                case AddPhoto:
+                    newWine.setPhoto(wine.getPhoto());
+                    mViewModel.insert(newWine);
+                    break;
+                case Edit:
+                case EditPhoto:
+                    newWine.setId(wine.getId());
+                    if(wine.getPhoto()!=null)
+                        newWine.setPhoto(wine.getPhoto());
+                    mViewModel.update(newWine);
+                    break;
             }
-
 //            Toast.makeText(getActivity(),"Dodano",Toast.LENGTH_SHORT).show();
             if (getFragmentManager() != null) {
                 getFragmentManager().beginTransaction().remove(AddWineFragment.this).commit();

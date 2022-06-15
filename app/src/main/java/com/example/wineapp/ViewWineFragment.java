@@ -3,6 +3,7 @@ package com.example.wineapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -48,7 +49,7 @@ public class ViewWineFragment extends Fragment {
         }
         topToolbar = rootView.findViewById(R.id.toolbarAddWineFragment);
         ((AppCompatActivity) requireActivity()).setSupportActionBar(topToolbar);
-        //todo Databinding
+        //todo Databinding???
         titleTextView = rootView.findViewById(R.id.titleTextView);
         assert getArguments() != null;
         titleTextView.setText(wine.getName());
@@ -57,7 +58,7 @@ public class ViewWineFragment extends Fragment {
         textViewAlcohol.setText("Zawartość alkoholu: "+wine.getAlcohol()+" %");
 
         textViewStartDate = rootView.findViewById(R.id.textViewStartDate);
-        textViewStartDate.setText("Data wstawienia: "+wine.getStartDate());
+        textViewStartDate.setText("Data wstawienia: "+wine.getStartDate());//todo czemu jest puste??
 
         textViewBottlingDate = rootView.findViewById(R.id.textViewBottlingDate);
         if(!wine.getBottlingDate().equalsIgnoreCase(""))
@@ -83,6 +84,17 @@ public class ViewWineFragment extends Fragment {
 
         textViewYeastTolerance = rootView.findViewById(R.id.textViewYeastTolerance);
         textViewYeastTolerance.setText("Tolerancja drożdży: "+wine.getYeastTolerance()+" %");
+
+        ImageView imageView = rootView.findViewById(R.id.imageView);
+        if(wine.getPhoto()!=null){
+            try {
+                imageView.setVisibility(View.VISIBLE);
+                imageView.setImageURI(Uri.parse(wine.getPhoto()));
+            }catch (Exception e){
+                e.printStackTrace();
+                imageView.setVisibility(View.GONE);
+            }
+        }else imageView.setVisibility(View.GONE);
 
         ((WineListActivity) requireActivity()).hideFloatingActionButton();
         closeViewWineFragmentButton = rootView.findViewById(R.id.closeViewWineFragmentButton);

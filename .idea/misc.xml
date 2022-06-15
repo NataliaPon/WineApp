@@ -3,9 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Projekty/Programy Android/WineApp/app/src/main/res/drawable/ic_calendar_color_primary.xml" value="0.2985" />
+        <entry key="..\:/Projekty/Programy Android/WineApp/app/src/main/res/drawable/round_color_accent.xml" value="0.202" />
+        <entry key="..\:/Projekty/Programy Android/WineApp/app/src/main/res/layout/activity_calendar.xml" value="0.19427083333333334" />
         <entry key="..\:/Projekty/Programy Android/WineApp/app/src/main/res/layout/activity_wine_list.xml" value="0.264" />
         <entry key="..\:/Projekty/Programy Android/WineApp/app/src/main/res/layout/add_wine_fragment.xml" value="0.264" />
+        <entry key="..\:/Projekty/Programy Android/WineApp/app/src/main/res/layout/dialog_choose_color.xml" value="0.18697916666666667" />
+        <entry key="..\:/Projekty/Programy Android/WineApp/app/src/main/res/layout/fragment_capture_image.xml" value="0.2625" />
+        <entry key="..\:/Projekty/Programy Android/WineApp/app/src/main/res/layout/preview_view.xml" value="0.2765625" />
+        <entry key="..\:/Projekty/Programy Android/WineApp/app/src/main/res/layout/row_wine_list.xml" value="0.536" />
         <entry key="..\:/Projekty/Programy Android/WineApp/app/src/main/res/layout/view_wine_fragment.xml" value="0.36666666666666664" />
+        <entry key="..\:/Projekty/Programy Android/WineApp/app/src/main/res/menu/menu_bottom.xml" value="0.365625" />
       </map>
     </option>
   </component>

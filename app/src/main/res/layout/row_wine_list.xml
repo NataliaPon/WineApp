@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:background="@drawable/round_color_accent"
+    android:backgroundTint="@color/labelColorPink"
     android:orientation="vertical"
-    android:padding="5dp">
+    android:padding="5dp"
+    app:cardCornerRadius="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:baselineAligned="false"
         android:gravity="center"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:orientation="horizontal">
 
         <LinearLayout
             android:id="@+id/itemContainer"
@@ -22,17 +23,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.8"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="2dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/photoImageView"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_weight="0.1"
-                android:padding="2dp"
                 android:src="@mipmap/ic_launcher_round"
                 app:civ_border_color="@color/colorPrimaryDark"
-                app:civ_border_width="4dp" />
+                app:civ_border_width="3dp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -84,4 +85,4 @@
             app:srcCompat="@drawable/ic_more_vert" />
 
     </LinearLayout>
-</LinearLayout>
+</androidx.cardview.widget.CardView>

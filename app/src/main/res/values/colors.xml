@@ -12,4 +12,15 @@
     <color name="lavenderBlush">#FFF0F5</color>
     <color name="rosyBrown">#B08383</color>
 
+    <color name="labelColorGreen">#168416</color>
+    <color name="labelColorYellow">#daa20f</color>
+    <color name="labelColorOrange">#ba4c09</color>
+    <color name="labelColorPink">#BF2C56</color>
+    <color name="labelColorRed">#9e1717</color>
+    <color name="labelColorViolet">#831393</color>
+    <color name="labelColorBlue">#171991</color>
+    <color name="labelColorBlack">#130202</color>
+    <color name="labelColorGrey">#6a6a6a</color>
+
+
 </resources>

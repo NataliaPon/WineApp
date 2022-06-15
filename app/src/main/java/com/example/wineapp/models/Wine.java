@@ -14,25 +14,28 @@ public class Wine implements Serializable {
     private int id;
     private String name;
     private String description;
-    private double alcohol;// w %
-    private double sugar;// cukier dodany w kg
-    private double volume; //objętość w L
-    private double water; //dodana woda w L
-    private double fruit;// sok owocowy lub miazga owocowa w L, zawartość cukru dodać do sugar
+    private double alcohol;// %
+    private double sugar;// g
+    private double volume; //liter
+    private double water; //liter
+    private double fruit;// juice or blended fruits in liter
     @ColumnInfo(name = "fruit_sugar")
-    private double fruitSugar;//cukier w owocach
-    private double sweetener;//słodzik w kg
+    private double fruitSugar;//sugar in fruits, in grams
+    private double sweetener;//g
     @ColumnInfo(name = "yeast_tolerance")
-    private double yeastTolerance;//tolerancja drożdży
+    private double yeastTolerance;
     @ColumnInfo(name = "start_date")
-    private String startDate;// data nastawienia wina
+    private String startDate;// start wine date
     @ColumnInfo(name = "bottling_date")
-    private String bottlingDate;//data butelkowania
-    //todo add image
-//    private Bitmap photo;
+    private String bottlingDate;
+    private String photo;//path to picture
+    @ColumnInfo(name = "background_color")
+    private int backgroundColor;
 
 
-    public Wine(String name, String description, double alcohol, double sugar, double volume, double water, double fruit, double fruitSugar, double sweetener, double yeastTolerance, String startDate, String bottlingDate) {
+
+    public Wine(String name, String description, double alcohol, double sugar, double volume, double water, double fruit,
+                double fruitSugar, double sweetener, double yeastTolerance, String startDate, String bottlingDate, int backgroundColor) {
         this.name = name;
         this.description = description;
         this.alcohol = alcohol;
@@ -45,6 +48,7 @@ public class Wine implements Serializable {
         this.yeastTolerance = yeastTolerance;
         this.startDate = startDate;
         this.bottlingDate = bottlingDate;
+        this.backgroundColor = backgroundColor;
     }
 
     public void setId(int id) {
@@ -101,5 +105,17 @@ public class Wine implements Serializable {
 
     public double getFruitSugar() {
         return fruitSugar;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public int getBackgroundColor() {
+        return backgroundColor;
     }
 }

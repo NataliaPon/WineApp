@@ -12,7 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.example.wineapp.Interfaces.WineDao;
 import com.example.wineapp.models.Wine;
 
-@Database(entities = {Wine.class}, version = 2)
+@Database(entities = {Wine.class}, version = 3)
 public abstract class WineDatabase extends RoomDatabase {
 
     private static WineDatabase instance;
